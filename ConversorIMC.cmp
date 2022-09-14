@@ -1,0 +1,28 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    
+    <aura:attribute name="num1" type="decimal" />
+    <aura:attribute name="num2" type="decimal" />
+    <aura:attribute name="total" type="decimal" />
+    <aura:attribute name="estado" type="string" />
+    
+    <aura:attribute name="calculo" type="boolean" default="false" />
+    
+    <div class="slds-box slds-theme_shade slds-theme_alert-texture">
+        <h3><center>CALCULADORA DE IMC</center></h3>
+        
+        <lightning:input name="input1" label="Informe seu peso (kg)" value="{!v.num1}" />
+        <lightning:input name="input2" label="Informe sua altura (metro e cm)" value="{!v.num2}" />
+        
+        <lightning:buttonGroup>
+            <lightning:button variant="brand-outline" label="Calcular" onclick="{!c.calculo}" />
+            <lightning:button variant="brand-outline" label="Limpar" onclick="{!c.Clear}" />
+        </lightning:buttonGroup>
+        <br/>
+    </div>
+    
+    <aura:if isTrue="{!v.calculo}">
+        O seu peso ideal é {!v.total} kg/m² <br></br> 
+        Você está {!v.estado} do peso! 
+    </aura:if>
+    
+</aura:component>
