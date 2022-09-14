@@ -1,0 +1,33 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    
+    <aura:attribute name="num1" type="decimal" />
+    <aura:attribute name="total" type="decimal" />
+    
+    <aura:attribute name="isDecimetro" type="boolean" default="false" />
+    <aura:attribute name="isQuilometros" type="boolean" default="false" />
+    <aura:attribute name="isCentimetro" type="boolean" default="false" />
+    
+    <div class="slds-box slds-theme_shade slds-theme_alert-texture">
+        <h3><center>-----CONVERSOR DE MEDIDAS-----</center></h3>
+    <h1><center><lightning:input name="input1" label="Digite o seu número em METROS" value="{!v.num1}" align="center" />
+    <br/></center></h1>
+    <lightning:buttonGroup>
+        <lightning:button variant="success" label="Converter para Decímetros" onclick="{!c.isDecimetro}" />
+        <lightning:button variant="success" label="Converter para Quilômetros" onclick="{!c.isQuilometros}" />
+        <lightning:button variant="success" label="Converter para Centímetros" onclick="{!c.isCentimetro}" />
+        <lightning:button variant="destructive" label="Limpar" onclick="{!c.Clear}" />
+    </lightning:buttonGroup>
+    <br/>
+    </div>
+    
+    <aura:if isTrue="{!v.isDecimetro}">
+        Metros para Decímetros = {!v.total} DM
+    </aura:if>
+    <aura:if isTrue="{!v.isQuilometros}">
+        Metros para Quilômetros = {!v.total} KM
+    </aura:if>
+    <aura:if isTrue="{!v.isCentimetro}">
+        Metros para Centímetros = {!v.total} CM
+    </aura:if>
+    
+</aura:component>
