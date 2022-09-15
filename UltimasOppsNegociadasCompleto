@@ -1,0 +1,72 @@
+*************************************** CLASSE no APEX ***********************************
+
+public class OpportunityC {
+     
+     @AuraEnabled
+      public static List getOpportunitiesNR(){
+              return [SELECT Name, Amount, StageName, CloseDate 
+                      FROM Opportunity 
+                      WHERE StageName = 'Negotiation/Review' 
+                      ORDER BY CreatedDate DESC 
+                      LIMIT 5];
+      }
+  }
+
+
+********************************* UltimasOppsNegociadas.cmp ******************************
+
+
+<aura:component controller="OpportunityC" implements="flexipage:availableForAllPageTypes" access="global" >
+    <aura:attribute name="opps" type="Opportunity[]" />
+    <!--aura:handler-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <lightning:card iconName="standard:opportunity" title="Oportunidades em Negociação">
+    	<div class="slds-p-around_medium">
+            <aura:iteration items="{!v.opps}" var="opp">
+                <p>------------</p>
+                <p>{!opp.Name}</p>
+                <p>{!opp.Amount}</p>
+                <p>{!opp.StageName}</p>
+                <p>{!opp.CloseDate}</p>
+            </aura:iteration>
+        </div>
+    </lightning:card>
+</aura:component>
+
+
+*************************** UltimasOppsNegociadasController.js *************************************
+
+({
+	doInit : function(component, event, helper) {
+		//pegar os dados do método através de um helper
+		helper.getOpportunities(component);
+	}
+})
+
+
+*********************** UltimasOppsNegociadasHelper.js **********************************************
+
+
+({
+	getOpportunities : function(component) {
+		//usando o método da classe APEX OpportunityC
+		//como um atributo do component.
+		let action = component.get("c.getOpportunitiesNR");
+        
+        //a função setCallback servirá para a verificar se a consulta obteve uma resposta positiva
+        action.setCallback(this, function(response) {
+            //response obtem um estado - "SUCCESS", "ERROR" e "INCOMPLETE".
+            let state = response.getState();
+            console.log(state);
+            //verifica se o estado eh positivo (SUCCESS), caso seja, atribui para a attributo opps os valores
+            if(state == "SUCCESS"){
+                component.set("v.opps", response.getReturnValue());
+                console.log(response.getReturnValue());
+            }
+        });
+        
+        //da biblioteca do Aura que enfileira as ações do front para o servidor
+        $A.enqueueAction(action);
+	}
+})
