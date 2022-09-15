@@ -1,0 +1,73 @@
+********************************************* CLASSE criada no APEX ************************************
+
+
+public class AccountList {
+ 
+     @AuraEnabled
+     public static List getListAccount(){
+            return [SELECT id, Name, Phone, Rating FROM Account ORDER BY CreatedDate DESC LIMIT 5];
+     }
+}
+
+
+********************************************* getAccount.cmp ********************************************
+
+
+<aura:component controller="AccountList" implements="flexipage:availableForAllPageTypes" access="global" >
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="columns" type="List" />
+    <aura:attribute name="accs" type="Account[]" />
+    
+    <lightning:card>
+        <aura:set attribute="title">
+            <lightning:icon iconName="standard:account" size="small"/>
+            Ultimas Contas
+        </aura:set>
+    	<div class="slds-p-around_medium">
+            <lightning:datatable
+                keyField="id"
+                data="{! v.accs }"
+                columns="{! v.columns }"
+                hideCheckboxColumn="true"/>
+        </div>
+    </lightning:card>
+</aura:component>
+
+
+*********************************** getAccountController.js ***************************************
+
+
+({
+	doInit : function(component, event, helper) {
+        //cria um objeto de colunas para uso do datatable
+        component.set("v.columns", [
+            {label:"Nome da Conta", fieldName:"Name", type:"text"},
+            {label:"Telefone", fieldName:"Phone", type:"phone"},
+            {label:"Classificação", fieldName:"Rating", type:"text"}
+        ]);
+        
+		helper.getAccounts(component);
+	}
+})
+
+
+
+**************************************** getAccountHelper.js ********************************************
+
+
+({
+	getAccounts : function(component) {		
+        let action = component.get("c.getListAccount");
+        
+        action.setCallback(this, function(response){
+            let state = response.getState();
+            console.log(state);
+            if(component.isValid() && state == "SUCCESS"){
+                console.log(response.getReturnValue());
+                component.set("v.accs", response.getReturnValue());
+            }   
+        });
+        
+        $A.enqueueAction(action);
+	}
+})
