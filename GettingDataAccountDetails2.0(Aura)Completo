@@ -1,0 +1,62 @@
+public class ContasClasseMamaco {
+    
+    @AuraEnabled
+    public static List<Account> getContasMC(){
+        return [SELECT Name, Industry, Phone, CreatedDate  
+                FROM Account
+                ORDER By Name ASC 
+                LIMIT 5];
+          }
+        
+        
+===================================== Component =====================================   
+
+
+}<aura:component controller="ContasClasseMamaco" implements="flexipage:availableForAllPageTypes" access="global" >
+   
+   <aura:attribute name="occs" type="Account[]"/>
+    <aura:handler name="init" value="{!this}" action="{!c.justDoIt}" />
+    
+    <lightning:card iconName="standard:account" title="Contas com detalhes">
+    	<div class="slds-p-around_medium">
+    <aura:iteration items="{!v.occs}" var ="occc">
+            <p>------------------------------</p>
+            <p>{!occc.Name}</p>
+            <p>{!occc.Industry}</p>
+            <p>{!occc.CreatedDate}</p>    
+            <p>{!occc.Phone}</p>
+     </aura:iteration>    
+        </div>
+    </lightning:card>
+</aura:component>
+
+
+===================================== Controller.js =====================================
+
+
+({
+	justDoIt : function(component, event, helper) {
+		helper.getAccounts(component);
+	}
+})
+
+
+===================================== Helper =====================================
+
+
+({
+	getOpportunities : function(component) {
+		
+		let action = component.get("c.getOpportunitiesNR");
+               action.setCallback(this, function(response) {
+                  let state = response.getState();
+            console.log(state);
+           
+            if(state == "SUCCESS"){
+                component.set("v.opps", response.getReturnValue());
+                console.log(response.getReturnValue());
+            }
+        });
+              $A.enqueueAction(action);
+	}
+})
